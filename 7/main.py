@@ -1,80 +1,29 @@
-""""
-This problem was asked by Google.
+"""
+This problem was asked by Facebook.
 
-A unival tree (which stands for "universal value") is a tree where all nodes under it have the same value.
+Given the mapping a = 1, b = 2, ... z = 26, and an encoded message, count the number of ways it can be decoded.
 
-Given the root to a binary tree, count the number of unival subtrees.
+For example, the message '111' would give 3, since it could be decoded as 'aaa', 'ka', and 'ak'.
 
-For example, the following tree has 5 unival subtrees:
-
-   0
-  / \
- 1   0
-    / \
-   1   0
-  / \
- 1   1
- """
-from typing import List, Optional
+You can assume that the messages are decodable. For example, '001' is not allowed.
+"""
 
 
-class Node:
-    __slots__ = ("key", "left", "right")
+def foo(key: str):
+    if key.startswith('0'):
+        return 0
+    elif len(key) <= 1:
+        return 1
 
-    def __init__(self) -> None:
-        self.key: int = 0
-        self.left: Optional[Node] = None
-        self.right: Optional[Node] = None
+    count = 0
+    if int(key[:2]) <= 26:
+        count += foo(key[2:])
 
-
-def foo_help(node):
-    if root is None:
-        return True, 0
-
-    lb, rb = True, True
-    lc, rc = 0, 0
-
-    if node.left is not None:
-        lb, lc = foo_help(node.left)
-
-    if node.right is not None:
-        rb, rc = foo_help(node.right)
-
-    count = lc + rc
-
-    if lb and rb:
-        if node.left is not None and node.key != node.left.key:
-            return False, count
-        if node.right is not None and node.key != node.right.key:
-            return False, count
-        return True, count + 1
-    return False, count
-
-
-def foo(root):
-    _, count = foo_help(root)
+    count += foo(key[1:])
     return count
 
 
-root = Node()
-al = Node()
-ar = Node()
-bl = Node()
-br = Node()
-cl = Node()
-cr = Node()
-root.key = 0
-root.left = al
-root.right = ar
-al.key = 1
-ar.key = 0
-ar.left = bl
-ar.right = br
-bl.key = 1
-br.key = 0
-bl.left = cl
-bl.right = cr
-cl.key = 1
-cr.key = 1
+print(foo('111'))
 
-print(foo(root))
+
+

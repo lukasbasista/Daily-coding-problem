@@ -1,32 +1,80 @@
-"""
-This problem was asked by Airbnb.
+""""
+This problem was asked by Google.
 
-Given a list of integers, write a function that returns the largest sum of non-adjacent numbers. Numbers can be 0 or negative.
+A unival tree (which stands for "universal value") is a tree where all nodes under it have the same value.
 
-For example, [2, 4, 6, 2, 5] should return 13, since we pick 2, 6, and 5. [5, 1, 1, 5] should return 10, since we pick 5 and 5.
+Given the root to a binary tree, count the number of unival subtrees.
 
-Follow-up: Can you do this in O(N) time and constant space?
+For example, the following tree has 5 unival subtrees:
 
-"""
-
-
-def foo(arr):
-    if not arr:
-        return 0
-    if len(arr) == 1:
-        return arr[0]
-    if len(arr) == 2:
-        return max(arr[0], arr[1])
-
-    counter = [0 for _ in arr]
-    counter[0] = max(0, arr[0])
-    counter[1] = max(counter[0], arr[1])
-
-    for i in range(2, len(arr)):
-        x = arr[i]
-        counter[i] = max(counter[i - 1], x + counter[i - 2])
-    return counter[-1]
+   0
+  / \
+ 1   0
+    / \
+   1   0
+  / \
+ 1   1
+ """
+from typing import List, Optional
 
 
-print(foo([2, 4, 6, 2, 5]))
-print(foo([5, 1, 1, 5]))
+class Node:
+    __slots__ = ("key", "left", "right")
+
+    def __init__(self) -> None:
+        self.key: int = 0
+        self.left: Optional[Node] = None
+        self.right: Optional[Node] = None
+
+
+def foo_help(node):
+    if root is None:
+        return True, 0
+
+    lb, rb = True, True
+    lc, rc = 0, 0
+
+    if node.left is not None:
+        lb, lc = foo_help(node.left)
+
+    if node.right is not None:
+        rb, rc = foo_help(node.right)
+
+    count = lc + rc
+
+    if lb and rb:
+        if node.left is not None and node.key != node.left.key:
+            return False, count
+        if node.right is not None and node.key != node.right.key:
+            return False, count
+        return True, count + 1
+    return False, count
+
+
+def foo(root):
+    _, count = foo_help(root)
+    return count
+
+
+root = Node()
+al = Node()
+ar = Node()
+bl = Node()
+br = Node()
+cl = Node()
+cr = Node()
+root.key = 0
+root.left = al
+root.right = ar
+al.key = 1
+ar.key = 0
+ar.left = bl
+ar.right = br
+bl.key = 1
+br.key = 0
+bl.left = cl
+bl.right = cr
+cl.key = 1
+cr.key = 1
+
+print(foo(root))
